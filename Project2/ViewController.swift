@@ -12,7 +12,7 @@ class ViewController: UIViewController {
     @IBOutlet var button1: UIButton!
     @IBOutlet var button2: UIButton!
     @IBOutlet var button3: UIButton!
-    
+    var questionsAsked = 0
     var correctAnswer = 0
     
     var countries = [String]()
@@ -44,7 +44,20 @@ class ViewController: UIViewController {
         button2.setImage(UIImage(named: countries[1]), for: .normal)
         button3.setImage(UIImage(named: countries[2]), for: .normal)
 
-        title = countries[correctAnswer].uppercased()
+        title = "\(countries[correctAnswer].uppercased()), SCORE = \(score)"
+        
+        if questionsAsked >= 10 {
+            questionsAsked = 0
+            score = 0
+            
+            title = "Final score"
+            let ac = UIAlertController(title: title, message: "Your Total score is \(score)", preferredStyle: .alert)
+            
+            ac.addAction(UIAlertAction(title: "Continue", style: .default, handler: askQuestion))
+            
+            present(ac, animated: true)
+            
+        }
     }
 
     @IBAction func buttonTapped(_ sender: UIButton) {
@@ -54,7 +67,7 @@ class ViewController: UIViewController {
             title = "Correct"
             score += 1
         } else {
-            title = "Wrong"
+            title = "Wrong! That is the flag of \(countries[sender.tag].uppercased())"
             score -= 1
         }
         
@@ -63,7 +76,7 @@ class ViewController: UIViewController {
         ac.addAction(UIAlertAction(title: "Continue", style: .default, handler: askQuestion))
         
         present(ac, animated: true)
-        
+        questionsAsked += 1
         //default, concel, destructive UIHint....
         
         
