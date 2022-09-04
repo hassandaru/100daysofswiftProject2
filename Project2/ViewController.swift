@@ -16,12 +16,28 @@ class ViewController: UIViewController {
     var correctAnswer = 0
     
     var countries = [String]()
+    var highScore = 0
+
     var score = 0
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        let defaults = UserDefaults.standard
+        
+        if let highestScore = defaults.object(forKey: "highScore") as? Data {
+                let jsonDecoder = JSONDecoder()
+            
+            do {
+                highScore = try jsonDecoder.decode(Int.self, from: highestScore)
+            } catch {
+                print("highest score could not be saved.")
+            }
+        }
+        
+        print("high score = \(highScore)")
         
         countries += ["estonia", "france", "germany", "ireland", "italy", "monaco", "nigeria", "poland", "russia", "spain", "uk", "us"]
 
@@ -48,9 +64,9 @@ class ViewController: UIViewController {
         title = "\(countries[correctAnswer].uppercased()), SCORE = \(score)"
         
         if questionsAsked >= 10 {
+            scoreTapped()
             questionsAsked = 0
             score = 0
-            scoreTapped()
             
             
         }
@@ -81,6 +97,26 @@ class ViewController: UIViewController {
     @objc func scoreTapped() {
         
         title = "Final score"
+        
+         if score > highScore {
+            highScore = score
+             //save the score in the UserDefaults
+             let jsonEncoder = JSONEncoder()
+             if let savedData = try? jsonEncoder.encode(highScore) {
+                 let defaults = UserDefaults.standard
+                 defaults.set(savedData, forKey: "highScore")
+             } else {
+                 print("Failed to save High Score.")
+             }
+             
+             let ac  = UIAlertController(title: "Wow", message: "Congratulations!! You beat the high score of the game.", preferredStyle: .alert)
+             
+             ac.addAction(UIAlertAction(title: "Ok", style: .default))
+             
+             present(ac, animated: true)
+             
+    }
+        
         let ac = UIAlertController(title: title, message: "Your Total score is \(score)", preferredStyle: .alert)
         
         ac.addAction(UIAlertAction(title: "Continue", style: .default, handler: askQuestion))
