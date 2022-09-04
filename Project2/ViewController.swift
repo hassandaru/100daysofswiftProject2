@@ -51,10 +51,10 @@ class ViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(scoreTapped))
 
         
-        askQuestion()
+        performSelector(onMainThread: #selector(askQuestion), with:nil , waitUntilDone: false)
     }
 
-    func askQuestion (action: UIAlertAction! = nil) {
+    @objc func askQuestion (action: UIAlertAction! = nil) {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
         button1.setImage(UIImage(named: countries[0]), for: .normal)
